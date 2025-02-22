@@ -25,8 +25,6 @@ public final class HealthKitManager: @unchecked Sendable {
     /// Shared instance of the HealthKit manager.
     public static let shared = HealthKitManager()
 
-    // MARK: Internal
-
     // MARK: - Internal Methods
 
     // MARK: Authorization Methods
@@ -38,17 +36,16 @@ public final class HealthKitManager: @unchecked Sendable {
     ///   - typesToRead: The set of HKObjectType objects that the app intends to read.
     ///   - completion: A completion handler that returns a `Result` with a Boolean indicating success or an `Error`.
     public func requestAuthorization(
-        toShare typesToShare: Set<HKSampleType>? = Set(HealthKitTypes.writableTypes.compactMap{$0}),
-        read typesToRead: Set<HKObjectType>? = Set(HealthKitTypes.readableTypes.compactMap{$0}),
+        toShare typesToShare: Set<HKSampleType>? = Set(
+            HealthKitTypes.writableTypes.compactMap(\.self)),
+        read typesToRead: Set<HKObjectType>? = Set(
+            HealthKitTypes.readableTypes.compactMap(\.self)),
         completion: @escaping @Sendable (Result<Bool, Error>) -> Void
     ) {
         guard HKHealthStore.isHealthDataAvailable() else {
             completion(.failure(HealthKitError.healthKitNotAvailable))
             return
         }
-
-        self.typesToRead = typesToRead
-        self.typesToShare = typesToShare
 
         healthStore.requestAuthorization(
             toShare: typesToShare, read: typesToRead
@@ -75,8 +72,10 @@ public final class HealthKitManager: @unchecked Sendable {
     /// - Returns: A Boolean value indicating whether authorization was successful.
     /// - Throws: An error of type `HealthKitError` if authorization fails.
     public func requestAuthorization(
-        toShare typesToShare: Set<HKSampleType>? = Set(HealthKitTypes.writableTypes.compactMap{$0}),
-        read typesToRead: Set<HKObjectType>? = Set(HealthKitTypes.readableTypes.compactMap{$0})
+        toShare typesToShare: Set<HKSampleType>? = Set(
+            HealthKitTypes.writableTypes.compactMap(\.self)),
+        read typesToRead: Set<HKObjectType>? = Set(
+            HealthKitTypes.readableTypes.compactMap(\.self))
     ) async throws -> Bool {
         try await withCheckedThrowingContinuation { continuation in
             requestAuthorization(toShare: typesToShare, read: typesToRead) {
@@ -286,7 +285,8 @@ public final class HealthKitManager: @unchecked Sendable {
     /// - **Parameter** types: A set of HKSampleType objects to check authorization for.
     /// - **Returns**: `true` if the app is authorized for all specified types, `false` otherwise.
     /// - **Throws**: This function is marked as throwing for compatibility with async patterns, though it doesn't throw errors directly.
-    public func checkAuthorizationStatus(for types: Set<HKSampleType>) async throws
+    public func checkAuthorizationStatus(for types: Set<HKSampleType>)
+        async throws
         -> Bool
     {
         await withCheckedContinuation { continuation in
@@ -304,15 +304,6 @@ public final class HealthKitManager: @unchecked Sendable {
     /// Dedicated queue for HealthKit operations.
     private let queue = DispatchQueue(
         label: "com.SRHealthkitManager.queue", qos: .userInitiated)
-
-    /// Accumulates unique samples during duplicate filtering.
-    private var uniqueSamples: [HKSample] = []
-
-    /// Holds an error encountered during duplicate filtering.
-    private var filterDuplicatesError: Error?
-
-    private var typesToShare: Set<HKSampleType>?
-    private var typesToRead: Set<HKObjectType>?
 
     // MARK: - Duplicate Check Methods
 
@@ -383,6 +374,28 @@ public final class HealthKitManager: @unchecked Sendable {
         _ samples: [HKSample],
         completion: @escaping @Sendable (Result<[HKSample], Error>) -> Void
     ) {
+        // Use actor to handle thread-safe mutations
+        actor FilterState {
+            var uniqueSamples: [HKSample] = []
+            var error: Error?
+
+            func appendSample(_ sample: HKSample) {
+                uniqueSamples.append(sample)
+            }
+
+            func setError(_ newError: Error) {
+                error = newError
+            }
+
+            func getResult() -> Result<[HKSample], Error> {
+                if let error {
+                    return .failure(error)
+                }
+                return .success(uniqueSamples)
+            }
+        }
+
+        let state = FilterState()
         let group = DispatchGroup()
 
         for sample in samples {
@@ -394,29 +407,26 @@ public final class HealthKitManager: @unchecked Sendable {
             checkExistingSamples(
                 type: sample.sampleType, start: startDate, end: endDate
             ) { result in
-                // Synchronize mutations to uniqueSamples and filterDuplicatesError.
-                self.queue.sync {
+                Task {
                     switch result {
                     case .success(let exists):
                         if !exists {
-                            self.uniqueSamples.append(sample)
+                            await state.appendSample(sample)
                         }
 
                     case .failure(let error):
-                        self.filterDuplicatesError = error
+                        await state.setError(error)
                     }
+                    group.leave()
                 }
-                group.leave()
             }
         }
 
         group.notify(queue: queue) {
-            // Ensure a safe read of our variables.
-            self.queue.sync {
-                if let error = self.filterDuplicatesError {
-                    completion(.failure(error))
-                } else {
-                    completion(.success(self.uniqueSamples))
+            Task {
+                let result = await state.getResult()
+                self.queue.async {
+                    completion(result)
                 }
             }
         }
