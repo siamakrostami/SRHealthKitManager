@@ -270,6 +270,28 @@ Task {
 
 ---
 
+## 📱 Example Project
+
+Looking to get started quickly? Check out our example project in the [Example/SRHealthKitManagerExample](Example/SRHealthKitManagerExample) directory. This SwiftUI-based example app demonstrates:
+
+🔍 Complete implementation of:
+- HealthKit authorization flow
+- Reading step count and heart rate data
+- Writing workout data
+- Error handling and user feedback
+- SwiftUI integration with MVVM architecture
+
+### 🚀 Running the Example
+
+1. Clone this repository
+2. Open `Example/SRHealthKitManagerExample/SRHealthKitManagerExample.xcodeproj`
+3. Select your development team
+4. Run on a physical iOS device (HealthKit is not available in simulators)
+
+> **Note**: Make sure to run the example on a physical iOS device, as HealthKit functionality is not available in the iOS Simulator.
+
+---
+
 ## 📜 License
 
 SRHealthKitManager is available under the **MIT License**. See the `LICENSE` file for details.
