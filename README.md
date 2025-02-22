@@ -1,33 +1,37 @@
-# SRHealthKitManager
+# 🚀 SRHealthKitManager
 
-A comprehensive Swift framework for simplifying HealthKit integration in iOS and macOS applications.
+A modern Swift framework that streamlines **HealthKit** integration in iOS and macOS applications.
 
-[![Swift](https://img.shields.io/badge/Swift-5.0-orange.svg)](https://swift.org)
-[![Platform](https://img.shields.io/badge/platform-iOS%2013.0%2B%20%7C%20macOS%2013.0%2B-blue.svg)](https://developer.apple.com/ios/)
+[![Swift](https://img.shields.io/badge/Swift-5.0-orange.svg)](https://swift.org)  
+[![Platform](https://img.shields.io/badge/platform-iOS%2013.0%2B%20%7C%20macOS%2013.0%2B-blue.svg)](https://developer.apple.com/ios/)  
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/yourusername/SRHealthKitManager/blob/main/LICENSE)
 
-## Overview
+---
 
-SRHealthKitManager is a powerful, easy-to-use Swift wrapper around Apple's HealthKit framework. It provides a clean, modern API with both callback and async/await support to simplify health data operations.
+## ✨ Overview
 
-Key features include:
-- Simplified authorization requests
-- Easy reading and writing of health data
-- Duplicate detection and filtering
-- Comprehensive type definitions for all HealthKit data types
-- Support for both callback-based and async/await patterns
-- Thread-safe operations
+**SRHealthKitManager** is a lightweight, intuitive Swift wrapper around Apple's **HealthKit** framework. It simplifies complex HealthKit operations using **modern Swift APIs**, including `async/await` and completion handlers.
 
-## Requirements
-- iOS 13.0+ / macOS 13.0+
-- Swift 5.0+
-- Xcode 13.0+
+### 🔑 Key Features:
+✅ **Effortless HealthKit Authorization** – Request permissions with a single function  
+✅ **Seamless Data Management** – Read, write, and update HealthKit data effortlessly  
+✅ **Duplicate Detection & Filtering** – Avoid redundant data entries  
+✅ **Thread-Safe Operations** – Ensures data integrity and smooth performance  
+✅ **Flexible API** – Supports both `async/await` and callback-based execution  
 
-## Installation
+---
 
-### Swift Package Manager
+## ⚙️ Requirements
+- 📱 iOS 13.0+ | 🖥️ macOS 13.0+
+- 🛠️ Swift 5.0+
+- 🏗️ Xcode 13.0+
 
-Add the following to your `Package.swift` file:
+---
+
+## 📦 Installation
+
+### 🚀 Swift Package Manager (SPM)
+Add SRHealthKitManager to your `Package.swift`:
 
 ```swift
 dependencies: [
@@ -35,34 +39,39 @@ dependencies: [
 ]
 ```
 
-Or add the package in Xcode:
-1. Go to File > Swift Packages > Add Package Dependency
-2. Enter the repository URL: `https://github.com/yourusername/SRHealthKitManager.git`
-3. Follow the prompts to complete the installation
+Or install via Xcode:
+1. **File** → **Swift Packages** → **Add Package Dependency**
+2. Enter: `https://github.com/yourusername/SRHealthKitManager.git`
+3. Complete installation 🎉
 
-## Usage
+---
 
-### Add HealthKit to your app
+## 🛠️ Setup & Configuration
 
-1. Enable HealthKit capability in your project:
-   - Select your project in Xcode
-   - Go to "Signing & Capabilities"
-   - Click "+" and add "HealthKit"
+### 📌 Enable HealthKit in Xcode
+1. Open your project settings in Xcode  
+2. Go to **Signing & Capabilities**  
+3. Click **+ Capability** → Select **HealthKit**  
 
-2. Add privacy descriptions to your Info.plist:
+### 🔐 Add Privacy Descriptions in `Info.plist`
 ```xml
 <key>NSHealthShareUsageDescription</key>
 <string>This app needs access to your health data to provide personalized insights.</string>
+
 <key>NSHealthUpdateUsageDescription</key>
 <string>This app needs to save health data to track your progress.</string>
 ```
 
-### Requesting Authorization
+---
 
+## 🚀 Usage
+
+### 🏥 Requesting Authorization
+
+#### ✅ Using Callbacks
 ```swift
 import SRHealthKitManager
 
-// Using callbacks
 HealthKitManager.shared.requestAuthorization { result in
     switch result {
     case .success(let success):
@@ -71,8 +80,10 @@ HealthKitManager.shared.requestAuthorization { result in
         print("Authorization failed: \(error.localizedDescription)")
     }
 }
+```
 
-// Using async/await
+#### ✅ Using `async/await`
+```swift
 Task {
     do {
         let success = try await HealthKitManager.shared.requestAuthorization()
@@ -81,8 +92,10 @@ Task {
         print("Authorization failed: \(error.localizedDescription)")
     }
 }
+```
 
-// For specific types
+#### ✅ Requesting Authorization for Specific Types
+```swift
 let typesToRead: Set<HKObjectType> = [
     HealthKitTypes.heartRate,
     HealthKitTypes.stepCount
@@ -105,10 +118,12 @@ Task {
 }
 ```
 
-### Reading Data
+---
 
+### 📊 Reading Data
+
+#### ✅ Using Callbacks
 ```swift
-// Using callbacks
 HealthKitManager.shared.readSamples(
     ofType: HealthKitTypes.stepCount!,
     predicate: HKQuery.predicateForSamples(
@@ -129,8 +144,10 @@ HealthKitManager.shared.readSamples(
         print("Failed to read step count: \(error.localizedDescription)")
     }
 }
+```
 
-// Using async/await
+#### ✅ Using `async/await`
+```swift
 Task {
     do {
         let samples = try await HealthKitManager.shared.readSamples(
@@ -155,29 +172,18 @@ Task {
 }
 ```
 
-### Writing Data
+---
 
+### ✍️ Writing Data
+
+#### ✅ Writing Single Sample
 ```swift
-// Create a step count sample
-let stepCountType = HealthKitTypes.stepCount!
-let stepCountQuantity = HKQuantity(unit: HKUnit.count(), doubleValue: 1000)
-let now = Date()
 let stepCountSample = HKQuantitySample(
-    type: stepCountType,
-    quantity: stepCountQuantity,
-    start: now.addingTimeInterval(-3600),
-    end: now
+    type: HealthKitTypes.stepCount!,
+    quantity: HKQuantity(unit: HKUnit.count(), doubleValue: 1000),
+    start: Date().addingTimeInterval(-3600),
+    end: Date()
 )
-
-// Using callbacks
-HealthKitManager.shared.save(stepCountSample) { result in
-    switch result {
-    case .success(let success):
-        print("Step count saved successfully: \(success)")
-    case .failure(let error):
-        print("Failed to save step count: \(error.localizedDescription)")
-    }
-}
 
 // Using async/await
 Task {
@@ -188,8 +194,10 @@ Task {
         print("Failed to save step count: \(error.localizedDescription)")
     }
 }
+```
 
-// Saving multiple samples
+#### ✅ Saving Multiple Samples
+```swift
 let samples = [stepCountSample, anotherSample, yetAnotherSample]
 
 Task {
@@ -202,7 +210,9 @@ Task {
 }
 ```
 
-### Checking Authorization Status
+---
+
+### 🔍 Checking Authorization Status
 
 ```swift
 let typesToCheck: Set<HKSampleType> = [
@@ -210,20 +220,17 @@ let typesToCheck: Set<HKSampleType> = [
     HealthKitTypes.stepCount
 ].compactMap { $0 }
 
-// Using direct call
-let isAuthorized = HealthKitManager.shared.checkAuthorizationStatus(for: typesToCheck)
-print("Is authorized: \(isAuthorized)")
-
-// Using async/await
 Task {
     let isAuthorized = try await HealthKitManager.shared.checkAuthorizationStatus(for: typesToCheck)
     print("Is authorized (async): \(isAuthorized)")
 }
 ```
 
-## Error Handling
+---
 
-SRHealthKitManager provides a dedicated `HealthKitError` enum for clear error handling:
+## ❌ Error Handling
+
+SRHealthKitManager defines clear, **Swift-native** error types:
 
 ```swift
 public enum HealthKitError: LocalizedError, Sendable {
@@ -235,68 +242,12 @@ public enum HealthKitError: LocalizedError, Sendable {
 }
 ```
 
-Example of handling errors:
+---
 
+## 🏃‍♂️ Advanced Usage
+
+### 🏋️‍♂️ Working with Workouts
 ```swift
-Task {
-    do {
-        let samples = try await HealthKitManager.shared.readSamples(ofType: HealthKitTypes.heartRate!)
-        // Process samples
-    } catch let error as HealthKitError {
-        switch error {
-        case .healthKitNotAvailable:
-            // HealthKit is not available on this device
-            showAlert("HealthKit is not available on this device")
-        case .unauthorizedForType(let type):
-            // User hasn't authorized access to this type
-            requestPermission(for: type)
-        case .dataNotAvailable:
-            // No data available
-            showEmptyState()
-        default:
-            // Handle other errors
-            print("Error: \(error.localizedDescription)")
-        }
-    } catch {
-        // Handle other types of errors
-        print("Unexpected error: \(error.localizedDescription)")
-    }
-}
-```
-
-## Advanced Usage
-
-### Custom Predicates for Filtering Data
-
-```swift
-// Get samples from the last week
-let calendar = Calendar.current
-let now = Date()
-let oneWeekAgo = calendar.date(byAdding: .day, value: -7, to: now)!
-
-let predicate = HKQuery.predicateForSamples(
-    withStart: oneWeekAgo,
-    end: now,
-    options: .strictStartDate
-)
-
-Task {
-    do {
-        let heartRateSamples = try await HealthKitManager.shared.readSamples(
-            ofType: HealthKitTypes.heartRate!,
-            predicate: predicate
-        )
-        // Process heart rate samples
-    } catch {
-        print("Error fetching heart rate data: \(error.localizedDescription)")
-    }
-}
-```
-
-### Working with Workouts
-
-```swift
-// Read workouts
 let workoutType = HKObjectType.workoutType()
 let predicate = HKQuery.predicateForWorkouts(with: .running)
 
@@ -306,11 +257,10 @@ Task {
             ofType: workoutType,
             predicate: predicate
         ) as? [HKWorkout]
-        
+
         for workout in workouts ?? [] {
             print("Workout: \(workout.workoutActivityType.name)")
             print("Duration: \(workout.duration) seconds")
-            print("Energy burned: \(workout.totalEnergyBurned?.doubleValue(for: HKUnit.kilocalorie()) ?? 0) kcal")
         }
     } catch {
         print("Error fetching workouts: \(error.localizedDescription)")
@@ -318,41 +268,14 @@ Task {
 }
 ```
 
-## Available HealthKit Types
+---
 
-SRHealthKitManager provides convenient access to all HealthKit data types through the `HealthKitTypes` struct. Some examples:
+## 📜 License
 
-### Activity & Fitness
-- `HealthKitTypes.activeEnergyBurned`
-- `HealthKitTypes.stepCount`
-- `HealthKitTypes.distanceWalkingRunning`
-- `HealthKitTypes.flightsClimbed`
+SRHealthKitManager is available under the **MIT License**. See the `LICENSE` file for details.
 
-### Vital Signs
-- `HealthKitTypes.heartRate`
-- `HealthKitTypes.bloodPressureSystolic`
-- `HealthKitTypes.bloodPressureDiastolic`
-- `HealthKitTypes.respiratoryRate`
-- `HealthKitTypes.oxygenSaturation`
+---
 
-### Body Measurements
-- `HealthKitTypes.bodyMass`
-- `HealthKitTypes.height`
-- `HealthKitTypes.bodyFatPercentage`
+## 🙌 Contributing
 
-### Sleep
-- `HealthKitTypes.sleepAnalysis`
-
-See `HealthKitTypes.swift` for the complete list of supported data types.
-
-## Thread Safety
-
-SRHealthKitManager uses a dedicated dispatch queue to ensure thread safety for all operations. You can safely call methods from any thread, including the main thread.
-
-## License
-
-SRHealthKitManager is available under the MIT license. See the LICENSE file for more info.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Feel free to **submit a pull request** or **open an issue**. 🚀
