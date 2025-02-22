@@ -37,7 +37,7 @@ public final class HealthKitManager: @unchecked Sendable {
     ///   - typesToShare: The set of HKSampleType objects that the app intends to write.
     ///   - typesToRead: The set of HKObjectType objects that the app intends to read.
     ///   - completion: A completion handler that returns a `Result` with a Boolean indicating success or an `Error`.
-    func requestAuthorization(
+    public func requestAuthorization(
         toShare typesToShare: Set<HKSampleType>? = Set(HealthKitTypes.writableTypes.compactMap{$0}),
         read typesToRead: Set<HKObjectType>? = Set(HealthKitTypes.readableTypes.compactMap{$0}),
         completion: @escaping @Sendable (Result<Bool, Error>) -> Void
@@ -74,7 +74,7 @@ public final class HealthKitManager: @unchecked Sendable {
     ///   - typesToRead: The set of HKObjectType objects that the app intends to read.
     /// - Returns: A Boolean value indicating whether authorization was successful.
     /// - Throws: An error of type `HealthKitError` if authorization fails.
-    func requestAuthorization(
+    public func requestAuthorization(
         toShare typesToShare: Set<HKSampleType>? = Set(HealthKitTypes.writableTypes.compactMap{$0}),
         read typesToRead: Set<HKObjectType>? = Set(HealthKitTypes.readableTypes.compactMap{$0})
     ) async throws -> Bool {
@@ -93,7 +93,7 @@ public final class HealthKitManager: @unchecked Sendable {
     /// - Parameters:
     ///   - sample: The HKSample to save.
     ///   - completion: A completion handler that returns a `Result` with a Boolean indicating save success or an `Error`.
-    func save(
+    public func save(
         _ sample: HKSample,
         completion: @escaping @Sendable (Result<Bool, Error>) -> Void
     ) {
@@ -133,7 +133,7 @@ public final class HealthKitManager: @unchecked Sendable {
     /// - Parameters:
     ///   - samples: An array of HKSample objects to save.
     ///   - completion: A completion handler that returns a `Result` with a Boolean indicating save success or an `Error`.
-    func saveBatch(
+    public func saveBatch(
         _ samples: [HKSample],
         completion: @escaping @Sendable (Result<Bool, Error>) -> Void
     ) {
@@ -178,7 +178,7 @@ public final class HealthKitManager: @unchecked Sendable {
     /// - Parameter sample: The HKSample to save.
     /// - Returns: A Boolean value indicating whether the save was successful.
     /// - Throws: An error of type `HealthKitError` if the save fails.
-    func save(_ sample: HKSample) async throws -> Bool {
+    public func save(_ sample: HKSample) async throws -> Bool {
         try await withCheckedThrowingContinuation { continuation in
             save(sample) { result in
                 continuation.resume(with: result)
@@ -191,7 +191,7 @@ public final class HealthKitManager: @unchecked Sendable {
     /// - Parameter samples: An array of HKSample objects to save.
     /// - Returns: A Boolean value indicating whether the save was successful.
     /// - Throws: An error of type `HealthKitError` if the save fails.
-    func saveBatch(_ samples: [HKSample]) async throws -> Bool {
+    public func saveBatch(_ samples: [HKSample]) async throws -> Bool {
         try await withCheckedThrowingContinuation { continuation in
             saveBatch(samples) { result in
                 continuation.resume(with: result)
@@ -209,7 +209,7 @@ public final class HealthKitManager: @unchecked Sendable {
     ///   - limit: The maximum number of samples to retrieve. Defaults to HKObjectQueryNoLimit.
     ///   - sortDescriptors: Optional sort descriptors to order the results. Defaults to nil.
     ///   - completion: A completion handler that returns a `Result` with an array of HKSample objects on success or an `Error` on failure.
-    func readSamples(
+    public func readSamples(
         ofType sampleType: HKSampleType,
         predicate: NSPredicate? = nil,
         limit: Int = HKObjectQueryNoLimit,
@@ -245,7 +245,7 @@ public final class HealthKitManager: @unchecked Sendable {
     ///   - sortDescriptors: Optional sort descriptors to order the results. Defaults to nil.
     /// - Returns: An array of HKSample objects.
     /// - Throws: An error if the query fails.
-    func readSamples(
+    public func readSamples(
         ofType sampleType: HKSampleType,
         predicate: NSPredicate? = nil,
         limit: Int = HKObjectQueryNoLimit,
@@ -265,7 +265,7 @@ public final class HealthKitManager: @unchecked Sendable {
     ///
     /// - **Parameter** types: A set of HKSampleType objects to check authorization for.
     /// - **Returns**: `true` if the app is authorized for all specified types, `false` otherwise.
-    func checkAuthorizationStatus(for types: Set<HKSampleType>) -> Bool {
+    public func checkAuthorizationStatus(for types: Set<HKSampleType>) -> Bool {
         // First check if HealthKit is available
         guard HKHealthStore.isHealthDataAvailable() else {
             return false
@@ -286,7 +286,7 @@ public final class HealthKitManager: @unchecked Sendable {
     /// - **Parameter** types: A set of HKSampleType objects to check authorization for.
     /// - **Returns**: `true` if the app is authorized for all specified types, `false` otherwise.
     /// - **Throws**: This function is marked as throwing for compatibility with async patterns, though it doesn't throw errors directly.
-    func checkAuthorizationStatus(for types: Set<HKSampleType>) async throws
+    public func checkAuthorizationStatus(for types: Set<HKSampleType>) async throws
         -> Bool
     {
         await withCheckedContinuation { continuation in
