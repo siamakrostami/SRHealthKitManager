@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		013EEAB72D6A39F300D05256 /* SRHealthKitManager in Frameworks */ = {isa = PBXBuildFile; productRef = 013EEAB62D6A39F300D05256 /* SRHealthKitManager */; };
+		018237702D6A467200BEDC96 /* SRHealthKitManager in Frameworks */ = {isa = PBXBuildFile; productRef = 0182376F2D6A467200BEDC96 /* SRHealthKitManager */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				013EEAB72D6A39F300D05256 /* SRHealthKitManager in Frameworks */,
+				018237702D6A467200BEDC96 /* SRHealthKitManager in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,7 +70,7 @@
 			);
 			name = SRHealthKitManagerExample;
 			packageProductDependencies = (
-				013EEAB62D6A39F300D05256 /* SRHealthKitManager */,
+				0182376F2D6A467200BEDC96 /* SRHealthKitManager */,
 			);
 			productName = SRHealthKitManagerExample;
 			productReference = 013EEAA22D6A39C600D05256 /* SRHealthKitManagerExample.app */;
@@ -101,7 +101,7 @@
 			mainGroup = 013EEA992D6A39C600D05256;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				013EEAB52D6A39F300D05256 /* XCRemoteSwiftPackageReference "SRHealthKitManager" */,
+				0182376E2D6A467200BEDC96 /* XCLocalSwiftPackageReference "../../SRHealthKitManager" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 013EEAA32D6A39C600D05256 /* Products */;
@@ -340,21 +340,16 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		013EEAB52D6A39F300D05256 /* XCRemoteSwiftPackageReference "SRHealthKitManager" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/siamakrostami/SRHealthKitManager";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 1.0.1;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		0182376E2D6A467200BEDC96 /* XCLocalSwiftPackageReference "../../SRHealthKitManager" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../SRHealthKitManager;
 		};
-/* End XCRemoteSwiftPackageReference section */
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		013EEAB62D6A39F300D05256 /* SRHealthKitManager */ = {
+		0182376F2D6A467200BEDC96 /* SRHealthKitManager */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 013EEAB52D6A39F300D05256 /* XCRemoteSwiftPackageReference "SRHealthKitManager" */;
 			productName = SRHealthKitManager;
 		};
 /* End XCSwiftPackageProductDependency section */
